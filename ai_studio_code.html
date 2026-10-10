@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Thread | Modern Fashion Demo</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 
+           --- EDITABLE STYLE SETTINGS ---
+           You can change these colors to match your brand 
+        */
+        :root {
+            --primary-black: #1a1a1a;
+            --accent-color: #555555;
+            --light-gray: #f4f4f4;
+            --white: #ffffff;
+            --cart-notify: #e63946;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--white);
+            color: var(--primary-black);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 5%;
+            background: var(--white);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+        }
+
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--cart-notify);
+            color: white;
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 50%;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            height: 80vh;
+            background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), 
+                        url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?auto=format&fit=crop&q=80&w=1600') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+
+        .btn {
+            padding: 15px 40px;
+            background: var(--white);
+            color: var(--primary-black);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: var(--primary-black);
+            color: var(--white);
+        }
+
+        /* --- CATEGORIES --- */
+        .section-title {
+            text-align: center;
+            margin: 60px 0 30px;
+            font-size: 2rem;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 0 5%;
+            margin-bottom: 60px;
+        }
+
+        .cat-card {
+            height: 300px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .cat-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .cat-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .cat-overlay {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: white;
+            padding: 10px 20px;
+            font-weight: 600;
+        }
+
+        /* --- PRODUCTS & FILTERS --- */
+        .filters {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            border: 1px solid #ddd;
+            background: none;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-black);
+            color: white;
+            border-color: var(--primary-black);
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            padding: 0 5%;
+        }
+
+        .product-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            background-color: var(--light-gray);
+            margin-bottom: 15px;
+        }
+
+        .product-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            font-weight: 600;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary-black);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* --- CART SIDEBAR --- */
+        #cart-sidebar {
+            position: fixed;
+            right: -100%;
+            top: 0;
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 2000;
+            transition: 0.4s ease;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .close-cart {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .cart-total {
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* --- ABOUT & CONTACT --- */
+        .about-section {
+            background: var(--light-gray);
+            padding: 80px 5%;
+            margin-top: 80px;
+            text-align: center;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .contact-section {
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .whatsapp-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: #25d366;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 20px;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: var(--primary-black);
+            color: white;
+            padding: 50px 5% 20px;
+            text-align: center;
+        }
+
+        .footer-links {
+            margin-bottom: 30px;
+        }
+
+        .footer-links a {
+            color: #ccc;
+            text-decoration: none;
+            margin: 0 15px;
+        }
+
+        /* Responsive Mobile Styles */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.5rem; }
+            .product-grid { grid-template-columns: 1fr; }
+            .categories { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="logo">Urban Thread</div>
+        <div class="cart-icon-container" onclick="toggleCart()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            <span class="cart-count" id="cart-badge">0</span>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <!-- EDIT TEXT BELOW -->
+        <h1>Effortless Style</h1>
+        <p>Discover our curated collection of modern essentials designed for the urban lifestyle.</p>
+        <a href="#shop" class="btn">Shop Collection</a>
+    </header>
+
+    <!-- SHOP BY CATEGORY -->
+    <section class="section-title">Shop by Category</section>
+    <div class="categories">
+        <!-- EDIT CATEGORY NAMES & IMAGES -->
+        <div class="cat-card" onclick="filterCategory('men')">
+            <img src="https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&q=80&w=600" alt="Men">
+            <div class="cat-overlay">Men</div>
+        </div>
+        <div class="cat-card" onclick="filterCategory('women')">
+            <img src="https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&q=80&w=600" alt="Women">
+            <div class="cat-overlay">Women</div>
+        </div>
+        <div class="cat-card" onclick="filterCategory('accessories')">
+            <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600" alt="Accessories">
+            <div class="cat-overlay">Accessories</div>
+        </div>
+    </div>
+
+    <!-- PRODUCT SECTION -->
+    <section id="shop">
+        <h2 class="section-title">Featured Products</h2>
+        
+        <div class="filters">
+            <button class="filter-btn active" onclick="filterCategory('all', this)">All</button>
+            <button class="filter-btn" onclick="filterCategory('men', this)">Men</button>
+            <button class="filter-btn" onclick="filterCategory('women', this)">Women</button>
+            <button class="filter-btn" onclick="filterCategory('accessories', this)">Accessories</button>
+        </div>
+
+        <div class="product-grid" id="product-container">
+            <!-- Products are injected by JavaScript -->
+        </div>
+    </section>
+
+    <!-- ABOUT SECTION -->
+    <section class="about-section" id="about">
+        <div class="about-content">
+            <!-- EDIT ABOUT TEXT -->
+            <h2>Our Story</h2>
+            <p style="margin-top: 20px;">Founded in 2024, Urban Thread started with a simple idea: high-quality fashion shouldn't be complicated. We focus on clean lines, sustainable materials, and timeless designs that work for you every single day.</p>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section class="contact-section">
+        <h2>Get in Touch</h2>
+        <p>Have questions about sizing or shipping?</p>
+        <!-- REPLACE THE PHONE NUMBER BELOW: e.g. 1234567890 -->
+        <a href="https://wa.me/1234567890" class="whatsapp-btn" target="_blank">
+            Chat on WhatsApp
+        </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#shop">Shop</a>
+            <a href="#">Shipping</a>
+            <a href="#">Returns</a>
+        </div>
+        <p>&copy; 2024 Urban Thread Demo. For educational purposes.</p>
+    </footer>
+
+    <!-- CART SIDEBAR -->
+    <div id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Your Cart</h3>
+            <span class="close-cart" onclick="toggleCart()">&times;</span>
+        </div>
+        <div class="cart-items" id="cart-items-list">
+            <!-- Cart items injected here -->
+            <p style="color: #999;">Your cart is empty.</p>
+        </div>
+        <div class="cart-total">
+            <span>Subtotal:</span>
+            <span id="cart-total-price">$0.00</span>
+        </div>
+        <button class="add-to-cart" style="margin-top: 20px;" onclick="alert('Demo Mode: Checkout is disabled.')">Proceed to Checkout</button>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        /* 
+           --- EDITABLE PRODUCT DATA ---
+           Add, remove, or change products here. 
+        */
+        const products = [
+            {
+                id: 1,
+                name: "Classic White Tee",
+                price: 25.00,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 2,
+                name: "Beige Linen Dress",
+                price: 65.00,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 3,
+                name: "Minimalist Watch",
+                price: 120.00,
+                category: "accessories",
+                image: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 4,
+                name: "Black Canvas Jacket",
+                price: 85.00,
+                category: "men",
+                image: "https://images.unsplash.com/photo-1551028719-00167b16eac5?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 5,
+                name: "Silk Summer Scarf",
+                price: 35.00,
+                category: "women",
+                image: "https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&q=80&w=600"
+            },
+            {
+                id: 6,
+                name: "Leather Weekend Bag",
+                price: 150.00,
+                category: "accessories",
+                image: "https://images.unsplash.com/photo-1547949003-9792a18a2601?auto=format&fit=crop&q=80&w=600"
+            }
+        ];
+
+        let cart = [];
+
+        // --- RENDER PRODUCTS ---
+        function displayProducts(filteredProducts) {
+            const container = document.getElementById('product-container');
+            container.innerHTML = '';
+
+            filteredProducts.forEach(product => {
+                const productHTML = `
+                    <div class="product-card">
+                        <img src="${product.image}" alt="${product.name}" class="product-img">
+                        <div class="product-info">
+                            <h3>${product.name}</h3>
+                            <p class="product-price">$${product.price.toFixed(2)}</p>
+                            <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += productHTML;
+            });
+        }
+
+        // --- FILTER LOGIC ---
+        function filterCategory(category, btn) {
+            // Update active button state
+            if(btn) {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            if (category === 'all') {
+                displayProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === category);
+                displayProducts(filtered);
+            }
+        }
+
+        // --- CART LOGIC ---
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('active');
+        }
+
+        function addToCart(productId) {
+            const product = products.find(p => p.id === productId);
+            cart.push(product);
+            updateCartUI();
+            
+            // Brief animation or feedback
+            const badge = document.getElementById('cart-badge');
+            badge.style.transform = 'scale(1.2)';
+            setTimeout(() => badge.style.transform = 'scale(1)', 200);
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cart-items-list');
+            const totalDisplay = document.getElementById('cart-total-price');
+            const badge = document.getElementById('cart-badge');
+            
+            badge.innerText = cart.length;
+            
+            if (cart.length === 0) {
+                list.innerHTML = '<p style="color: #999;">Your cart is empty.</p>';
+                totalDisplay.innerText = '$0.00';
+                return;
+            }
+
+            list.innerHTML = '';
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <div>
+                            <p style="font-weight:600">${item.name}</p>
+                            <p style="font-size:0.8rem; color:#666">$${item.price.toFixed(2)}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="background:none; border:none; cursor:pointer; color:red">Remove</button>
+                    </div>
+                `;
+            });
+
+            totalDisplay.innerText = `$${total.toFixed(2)}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // Initialize display on load
+        window.onload = () => displayProducts(products);
+
+    </script>
+</body>
+</html>
